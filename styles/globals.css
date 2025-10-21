@@ -1,26 +1,317 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap');
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Swiss Design System colors from theme.json */
+    --color-primary: #000000;
+    --color-secondary: #F5F5F5;
+    --color-tertiary: #E0E0E0;
+    --color-accent: #D4AF37;
+    --color-neutral: #666666;
+    --color-success: #00AA00;
+    --color-warning: #FFAA00;
+    --color-error: #CC0000;
+    --color-background: #FFFFFF;
+    --color-surface: #FAFAFA;
+    
+    --color-text-primary: #000000;
+    --color-text-secondary: #333333;
+    --color-text-tertiary: #666666;
+    --color-text-inverse: #FFFFFF;
+    
+    /* Swiss Design System fonts from theme.json */
+    --font-primary: 'IBM Plex Sans', "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-secondary: 'IBM Plex Sans', "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-display: 'IBM Plex Sans', "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-handwritten: 'Caveat', cursive;
+    
+    /* Swiss Design System corners from theme.json (all 0 for sharp edges) */
+    --radius-small: 0;
+    --radius-medium: 0;
+    --radius-large: 0;
+    --radius-xl: 0;
+    --radius-2xl: 0;
+    
+    /* Swiss Design System spacing from theme.json */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    --spacing-2xl: 4rem;
+    --spacing-3xl: 6rem;
+    --spacing-4xl: 8rem;
+    
+    /* Swiss Design System shadows from theme.json (none for clean look) */
+    --shadow-sm: none;
+    --shadow-md: none;
+    --shadow-lg: none;
+    --shadow-xl: none;
+    
+    /* Typography scale for Swiss design */
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.25rem;
+    --text-2xl: 1.5rem;
+    --text-3xl: 1.875rem;
+    --text-4xl: 2.25rem;
+    --text-5xl: 3rem;
+    --text-6xl: 3.75rem;
+    
+    --leading-tight: 1.2;
+    --leading-normal: 1.4;
+    --leading-relaxed: 1.6;
+  }
+  
+  /* Base styles */
+  * {
+    box-sizing: border-box;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'IBM Plex Sans', "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: var(--color-text-primary);
+    background-color: var(--color-background);
+    line-height: var(--leading-normal);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 400;
+  }
+  
+  /* Ensure all text elements use IBM Plex Sans */
+  h1, h2, h3, h4, h5, h6, p, a, button, input, textarea, select {
+    font-family: 'IBM Plex Sans', "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+  
+  /* Swiss design focus styles */
+  *:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@theme {
+  /* Tailwind theme configuration using Swiss design system */
+  --color-primary: var(--color-primary);
+  --color-secondary: var(--color-secondary);
+  --color-tertiary: var(--color-tertiary);
+  --color-accent: var(--color-accent);
+  --color-neutral: var(--color-neutral);
+  --color-success: var(--color-success);
+  --color-warning: var(--color-warning);
+  --color-error: var(--color-error);
+  --color-background: var(--color-background);
+  --color-surface: var(--color-surface);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-tertiary: var(--color-text-tertiary);
+  
+  --font-sans: var(--font-primary);
+  --font-serif: var(--font-secondary);
+  --font-display: var(--font-display);
+  
+  --radius-sm: var(--radius-small);
+  --radius-md: var(--radius-medium);
+  --radius-lg: var(--radius-large);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+  
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+}
+
+@layer components {
+  /* Swiss design button components */
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium transition-all duration-200 focus:outline-none;
+    border: 2px solid var(--color-primary);
+    background: var(--color-background);
+    color: var(--color-text-primary);
+  }
+  
+  .btn:hover {
+    background: var(--color-text-primary);
+    color: var(--color-text-inverse);
+  }
+  
+  .btn-primary {
+    background: var(--color-primary);
+    color: var(--color-text-inverse);
+    border-color: var(--color-primary);
+  }
+  
+  .btn-primary:hover {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+  
+  .btn-accent {
+    background: var(--color-accent);
+    color: var(--color-text-inverse);
+    border-color: var(--color-accent);
+  }
+  
+  .btn-accent:hover {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+  
+  .btn-lg {
+    @apply px-6 py-3 text-base;
+  }
+  
+  .btn-sm {
+    @apply px-3 py-1.5 text-xs;
+  }
+  
+  /* Swiss design form components */
+  .form-input {
+    @apply block w-full px-3 py-2 border-2 border-tertiary focus:outline-none focus:border-primary;
+    background: var(--color-background);
+    color: var(--color-text-primary);
+  }
+  
+  .form-textarea {
+    @apply block w-full px-3 py-2 border-2 border-tertiary focus:outline-none focus:border-primary;
+    background: var(--color-background);
+    color: var(--color-text-primary);
+  }
+  
+  .form-label {
+    @apply block text-sm font-medium text-text-primary mb-1;
+  }
+  
+  /* Swiss design navigation components */
+  .nav-link {
+    @apply text-text-primary hover:text-accent transition-colors duration-200;
+    text-decoration: none;
+  }
+  
+  .nav-link-active {
+    @apply text-accent font-medium;
+  }
+  
+  /* Swiss design section components */
+  .section {
+    @apply py-16 px-4 sm:px-6 lg:px-8;
+  }
+  
+  .section-sm {
+    @apply py-8 px-4 sm:px-6 lg:px-8;
+  }
+  
+  .section-lg {
+    @apply py-24 px-4 sm:px-6 lg:px-8;
+  }
+  
+  /* Swiss design container components */
+  .container {
+    @apply max-w-7xl mx-auto;
+  }
+  
+  .container-sm {
+    @apply max-w-3xl mx-auto;
+  }
+  
+  .container-lg {
+    @apply max-w-7xl mx-auto;
+  }
+}
+
+@layer utilities {
+  /* Swiss design text utilities */
+  .text-gradient {
+    background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .text-handwritten {
+    font-family: var(--font-handwritten);
+    transform: rotate(-2deg);
+    display: inline-block;
+  }
+  
+  /* Swiss design animation utilities */
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  /* Swiss design hover utilities */
+  .hover-lift {
+    @apply transition-transform duration-200 hover:-translate-y-0.5;
+  }
+  
+  /* Swiss design focus utilities */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2;
+  }
+  
+  /* Swiss design spacing utilities */
+  .space-y-section > * + * {
+    margin-top: var(--spacing-4xl);
+  }
+  
+  .space-y-section-sm > * + * {
+    margin-top: var(--spacing-2xl);
+  }
+}
+
+/* Swiss design keyframe animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Swiss design responsive utilities */
+@media (max-width: 640px) {
+  .section {
+    @apply py-12 px-4;
+  }
+  
+  .section-lg {
+    @apply py-16 px-4;
+  }
+}
+
+/* Swiss design print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    color: black !important;
+    background: white !important;
+  }
 }

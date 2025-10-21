@@ -1,0 +1,9 @@
+{
+  "layout": {
+    "sections": [
+      { "name": "header", "collections": { "navigationItem": {} } },
+      { "name": "footer", "collections": {} }
+    ],
+    "contentIndex": 1
+  }
+}

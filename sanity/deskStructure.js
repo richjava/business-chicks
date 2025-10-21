@@ -1,0 +1,103 @@
+import { BookIcon, FolderIcon } from "@sanity/icons";
+
+export const myStructure = (S) =>
+  S.list()
+    .title("Content")
+    .items([
+      S.listItem()
+        .title("Pages")
+        .icon(FolderIcon)
+        .child(
+          S.list()
+            .title("Pages")
+            .items([
+              S.listItem()
+                .title("home")
+                .icon(BookIcon)
+                .child(S.document().schemaType("home").documentId("home")),
+
+              S.listItem()
+                .title("join")
+                .icon(BookIcon)
+                .child(S.document().schemaType("join").documentId("join")),
+
+              S.listItem()
+                .title("ourMeetings")
+                .icon(BookIcon)
+                .child(
+                  S.document()
+                    .schemaType("ourMeetings")
+                    .documentId("ourMeetings"),
+                ),
+
+              S.listItem()
+                .title("resources")
+                .icon(BookIcon)
+                .child(
+                  S.document().schemaType("resources").documentId("resources"),
+                ),
+
+              S.listItem()
+                .title("contact")
+                .icon(BookIcon)
+                .child(
+                  S.document().schemaType("contact").documentId("contact"),
+                ),
+            ]),
+        ),
+      S.listItem()
+        .title("Layout")
+        .icon(FolderIcon)
+        .child(
+          S.list()
+            .title("Layout")
+            .items([
+              S.listItem()
+                .title("headerSection")
+                .icon(BookIcon)
+                .child(
+                  S.document()
+                    .schemaType("headerSection")
+                    .documentId("header-xlJYHk_Ce"),
+                ),
+
+              S.listItem()
+                .title("footerSection")
+                .icon(BookIcon)
+                .child(
+                  S.document()
+                    .schemaType("footerSection")
+                    .documentId("footer-R-LZ1JP1yq"),
+                ),
+            ]),
+        ),
+      ...S.documentTypeListItems().filter(
+        (listItem) =>
+          ![
+            "headerSection",
+            "footerSection",
+            "home",
+            "homeLandingSection",
+            "mainCTASection",
+            "meetingsCTASection",
+            "joinCTASection",
+            "homeTestimonialsSection",
+            "join",
+            "joinBannerSection",
+            "membershipSection",
+            "requirementsSection",
+            "joinTestimonialsSection",
+            "ourMeetings",
+            "meetingsBannerSection",
+            "meetingsInfoSection",
+            "meetingsTestimonialsSection",
+            "resources",
+            "resourcesBannerSection",
+            "resourcesSection",
+            "resourcesTestimonialsSection",
+            "contact",
+            "contactBannerSection",
+            "contactSection",
+          ].includes(listItem.getId()),
+      ),
+    ]);

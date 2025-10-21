@@ -1,0 +1,71 @@
+{
+  "pages": {
+    "home": {
+      "sections": {
+        "homeLanding": {
+          "collections": {
+            "keywordSlide": {
+              "expand": [{ "key": "image", "val": "image.asset" }]
+            }
+          }
+        },
+        "mainCTA": { "collections": {} },
+        "meetingsCTA": { "collections": {} },
+        "joinCTA": { "collections": {} },
+        "homeTestimonials": {
+          "collections": {
+            "testimonial": {
+              "expand": [{ "key": "image", "val": "image.asset" }]
+            }
+          }
+        }
+      }
+    },
+    "join": {
+      "sections": {
+        "joinBanner": { "collections": {} },
+        "membership": { "collections": {} },
+        "requirements": { "collections": {} },
+        "joinTestimonials": {
+          "collections": {
+            "testimonial": {
+              "expand": [{ "key": "image", "val": "image.asset" }]
+            }
+          }
+        }
+      }
+    },
+    "ourMeetings": {
+      "sections": {
+        "meetingsBanner": { "collections": {} },
+        "meetingsInfo": { "collections": {} },
+        "meetingsTestimonials": {
+          "collections": {
+            "testimonial": {
+              "expand": [{ "key": "image", "val": "image.asset" }]
+            }
+          }
+        }
+      }
+    },
+    "resources": {
+      "sections": {
+        "resourcesBanner": { "collections": {} },
+        "resources": { "collections": { "resource": {} } },
+        "resourcesTestimonials": {
+          "collections": {
+            "testimonial": {
+              "expand": [{ "key": "image", "val": "image.asset" }]
+            }
+          }
+        }
+      }
+    },
+    "contact": {
+      "sections": {
+        "contactBanner": { "collections": {} },
+        "contact": { "collections": {} }
+      }
+    }
+  }
+}
