@@ -228,29 +228,40 @@ export async function getProps(config: GetPropsConfig): Promise<PageProps> {
       }
       
       // Add collections to sections
-      console.log('Processing pagePromises:', Object.keys(pagePromises));
       for (const key in pagePromises) {
         if (pagePromises.hasOwnProperty(key)) {
           if (key.startsWith("section")) {
             const splitKeys = key.split(".");
-            console.log('Processing collection key:', key, 'splitKeys:', splitKeys);
             if (props[splitKeys[1]]) {
               if (!(props[splitKeys[1]] as { collections?: Record<string, unknown> }).collections) {
                 (props[splitKeys[1]] as { collections?: Record<string, unknown> }).collections = {};
               }
-              // Wait for the collection promise to resolve
-              const collectionData = await pagePromises[key];
-              console.log('Collection data for', key, ':', collectionData);
-              ((props[splitKeys[1]] as { collections?: Record<string, unknown> }).collections as Record<string, unknown>)[splitKeys[2]] = collectionData as unknown;
-            } else {
-              console.log('Props not found for:', splitKeys[1], 'available props:', Object.keys(props));
+              // Wait for the collection promise to resolve with timeout
+              try {
+                const collectionData = await Promise.race([
+                  pagePromises[key],
+                  new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('Collection fetch timeout')), 10000)
+                  )
+                ]);
+                ((props[splitKeys[1]] as { collections?: Record<string, unknown> }).collections as Record<string, unknown>)[splitKeys[2]] = collectionData as unknown;
+              } catch (error) {
+                console.error(`Failed to fetch collection ${key}:`, error);
+                // Set empty array as fallback
+                ((props[splitKeys[1]] as { collections?: Record<string, unknown> }).collections as Record<string, unknown>)[splitKeys[2]] = [];
+              }
             }
           }
         }
       }
       
-      // Reset promises
-      Object.keys(pagePromises).forEach(key => delete pagePromises[key]);
+      // Reset only page-specific promises, keep layout promises for other pages
+      Object.keys(pagePromises).forEach(key => {
+        // Keep layout promises (header, footer, section.headerContent.*, section.footerContent.*)
+        if (!key.startsWith('header') && !key.startsWith('footer') && !key.startsWith('section.headerContent') && !key.startsWith('section.footerContent')) {
+          delete pagePromises[key];
+        }
+      });
       
       return resolve(props);
       
@@ -437,10 +448,13 @@ async function getSectionCollectionData(config: { pageSettings: { sections: Reco
               collectionExpand = (collection as { expand?: unknown }).expand ?? null;
             }
 
-            const promiseKey = `section.${camelize(section.name) + "Content"}.${collectionName}`;
-            const queryString = `*[_type == "${camelize(collectionName)}"]${getExpand(collectionExpand)}`;
-            console.log('Setting up layout collection promise:', promiseKey, 'query:', queryString);
-            pagePromises[promiseKey] = client.fetch(queryString);
+            pagePromises[
+              `section.${camelize(section.name) + "Content"}.${collectionName}`
+            ] = client.fetch(
+              `*[_type == "${camelize(collectionName)}"]${getExpand(
+                collectionExpand
+              )}`
+            );
           }
         }
       }
