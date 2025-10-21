@@ -46,8 +46,11 @@ export default defineConfig({
   schema: {
     types: [global, header, footer, home, join, ourMeetings, resources, contact, homeLandingSection, mainCtaSection, meetingsCtaSection, joinCtaSection, homeTestimonialsSection, joinBannerSection, membershipSection, requirementsSection, joinTestimonialsSection, meetingsBannerSection, meetingsInfoSection, meetingsTestimonialsSection, resourcesBannerSection, resourcesSection, resourcesTestimonialsSection, contactBannerSection, contactSection, navigationItem, keywordSlide, testimonial, resource],
   },
-  plugins: isDev ? [structureTool({
-    structure: myStructure,
-  }), visionTool()] : [structureTool()]
-});
+  plugins: [
+    structureTool({
+      structure: myStructure,
+    }),
+    ...(isDev ? [visionTool()] : []),
+    ],
+  });
   
