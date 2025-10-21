@@ -368,47 +368,45 @@ function buildFilterString(filters: Filter[]): string {
 }
 
 async function getSectionCollectionData(config: { pageSettings: { sections: Record<string, unknown> }; params?: unknown }): Promise<void> {
-  return new Promise(function (resolve): void {
-    const pageSections = config.pageSettings.sections;
-    for (const sectionName in pageSections) {
-      const section = pageSections[sectionName] as { collections?: Record<string, { limit?: number; offset?: number; sort?: Record<string, string>; expand?: unknown; filters?: Filter[] }> };
-      let expandString = "";
-      if (section && section.collections) {
-        for (const collectionName in section.collections) {
-          const collection = section.collections[collectionName];
-          let paginationRangeString = "";
-          let sortString = "";
-            const defaultLimit = 20;
-            if (collection.limit) {
-              paginationRangeString = `[${
-                collection.offset ? collection.offset : "0"
-              }..${collection.limit - 1}]`;
-            } else if (collection.offset) {
-              paginationRangeString = `[${collection.offset}..${defaultLimit}]`;
-            }
-
-            if (collection.sort) {
-              sortString += " | order(";
-              for (const sort in collection.sort) {
-                const [field, direction] = collection.sort[sort].split(":");
-
-                sortString += `${field} ${direction}`;
-              }
-              sortString += ")";
-            }
-          expandString = getExpand(collection.expand as unknown);
-          let paramsString = "";
-          if (collection.filters) {
-            paramsString = buildFilterString(collection.filters);
+  const pageSections = config.pageSettings.sections;
+  for (const sectionName in pageSections) {
+    const section = pageSections[sectionName] as { collections?: Record<string, { limit?: number; offset?: number; sort?: Record<string, string>; expand?: unknown; filters?: Filter[] }> };
+    let expandString = "";
+    if (section && section.collections) {
+      for (const collectionName in section.collections) {
+        const collection = section.collections[collectionName];
+        let paginationRangeString = "";
+        let sortString = "";
+          const defaultLimit = 20;
+          if (collection.limit) {
+            paginationRangeString = `[${
+              collection.offset ? collection.offset : "0"
+            }..${collection.limit - 1}]`;
+          } else if (collection.offset) {
+            paginationRangeString = `[${collection.offset}..${defaultLimit}]`;
           }
-          const queryString = `*[_type == "${camelize(collectionName)}"${paramsString ? ` && ${paramsString}` : ""}]${paginationRangeString}${sortString} ${expandString}`;
-          pagePromises[`section.${sectionName + "Content"}.${collectionName}`] =
-            client.fetch(queryString);
+
+          if (collection.sort) {
+            sortString += " | order(";
+            for (const sort in collection.sort) {
+              const [field, direction] = collection.sort[sort].split(":");
+
+              sortString += `${field} ${direction}`;
+            }
+            sortString += ")";
+          }
+        expandString = getExpand(collection.expand as unknown);
+        let paramsString = "";
+        if (collection.filters) {
+          paramsString = buildFilterString(collection.filters);
         }
+        const queryString = `*[_type == "${camelize(collectionName)}"${paramsString ? ` && ${paramsString}` : ""}]${paginationRangeString}${sortString} ${expandString}`;
+        pagePromises[`section.${sectionName + "Content"}.${collectionName}`] = client.fetch(queryString);
       }
     }
+  }
 
-    const layoutSectionsUnknown = (layoutSettings as { layout: { sections: unknown } }).layout.sections;
+  const layoutSectionsUnknown = (layoutSettings as { layout: { sections: unknown } }).layout.sections;
     
     // Handle sections as array (from layout.json structure)
     if (Array.isArray(layoutSectionsUnknown)) {
@@ -442,42 +440,40 @@ async function getSectionCollectionData(config: { pageSettings: { sections: Reco
           }
         }
       }
-    } else if (layoutSectionsUnknown && typeof layoutSectionsUnknown === 'object') {
-      // Handle sections as object (fallback)
-      const layoutSectionsObj = layoutSectionsUnknown as Record<string, { name: string; expand?: unknown; collections?: Record<string, unknown> }>;
-      for (const sectionName in layoutSectionsObj) {
-        const section = layoutSectionsObj[sectionName];
-        const pageName = camelize(section.name);
-        let sectionExpand = null;
-        if (section.expand) {
-          sectionExpand = section.expand;
-        }
-        if (pageName) {
-          pagePromises[pageName] = client.fetch(
-            `*[_type == "${pageName}"]${getExpand(sectionExpand)}`
-          );
-        }
-        if (section.name && section.collections) {
-          for (const collectionName in section.collections) {
-            let collectionExpand = null;
-            const collection = section.collections[collectionName] as unknown;
-            if (collection && typeof collection === 'object' && 'expand' in collection) {
-              collectionExpand = (collection as { expand?: unknown }).expand ?? null;
-            }
-
-            pagePromises[
-              `section.${camelize(section.name) + "Content"}.${collectionName}`
-            ] = client.fetch(
-              `*[_type == "${camelize(collectionName)}"]${getExpand(
-                collectionExpand
-              )}`
-            );
+  } else if (layoutSectionsUnknown && typeof layoutSectionsUnknown === 'object') {
+    // Handle sections as object (fallback)
+    const layoutSectionsObj = layoutSectionsUnknown as Record<string, { name: string; expand?: unknown; collections?: Record<string, unknown> }>;
+    for (const sectionName in layoutSectionsObj) {
+      const section = layoutSectionsObj[sectionName];
+      const pageName = camelize(section.name);
+      let sectionExpand = null;
+      if (section.expand) {
+        sectionExpand = section.expand;
+      }
+      if (pageName) {
+        pagePromises[pageName] = client.fetch(
+          `*[_type == "${pageName}"]${getExpand(sectionExpand)}`
+        );
+      }
+      if (section.name && section.collections) {
+        for (const collectionName in section.collections) {
+          let collectionExpand = null;
+          const collection = section.collections[collectionName] as unknown;
+          if (collection && typeof collection === 'object' && 'expand' in collection) {
+            collectionExpand = (collection as { expand?: unknown }).expand ?? null;
           }
+
+          pagePromises[
+            `section.${camelize(section.name) + "Content"}.${collectionName}`
+          ] = client.fetch(
+            `*[_type == "${camelize(collectionName)}"]${getExpand(
+              collectionExpand
+            )}`
+          );
         }
       }
     }
-    return resolve();
-  });
+  }
 }
 
 export async function getPaths(slug: string) {
