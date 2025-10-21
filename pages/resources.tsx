@@ -28,6 +28,6 @@ export const getStaticProps: GetStaticProps = async () => {
   const props = await getProps({pageName: 'resources'});
   return {
     props: props,
-    revalidate: 10
+    revalidate: 30
   };
 }

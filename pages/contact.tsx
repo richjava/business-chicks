@@ -26,6 +26,6 @@ export const getStaticProps: GetStaticProps = async () => {
   const props = await getProps({pageName: 'contact'});
   return {
     props: props,
-    revalidate: 10
+    revalidate: 30
   };
 }

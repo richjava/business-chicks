@@ -30,6 +30,6 @@ export const getStaticProps: GetStaticProps = async () => {
   const props = await getProps({pageName: 'join'});
   return {
     props: props,
-    revalidate: 10
+    revalidate: 30
   };
 }
