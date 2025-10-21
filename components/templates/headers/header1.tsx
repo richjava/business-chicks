@@ -8,6 +8,13 @@ export default function Header1({ content }: HeaderProps) {
   const router = useRouter();
 
   const navigationItems = content?.collections?.navigationItem || [];
+  
+  // Debug logging for navigation items
+  if (typeof window !== 'undefined') {
+    console.log('Header1 - content:', content);
+    console.log('Header1 - navigationItems:', navigationItems);
+    console.log('Header1 - collections:', content?.collections);
+  }
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);

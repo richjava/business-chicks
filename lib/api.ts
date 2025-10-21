@@ -152,8 +152,8 @@ export async function getProps(config: GetPropsConfig): Promise<PageProps> {
       
       // Add global data to layout components
       if (globalData) {
-        props.headerContent = { global: globalData };
-        props.footerContent = { global: globalData };
+        props.headerContent = { global: globalData, collections: {} };
+        props.footerContent = { global: globalData, collections: {} };
       }
       
       // Process layout sections and add them to props
@@ -168,7 +168,8 @@ export async function getProps(config: GetPropsConfig): Promise<PageProps> {
             const sectionData = await pagePromises[pageName];
             props[propName] = {
               data: sectionData,
-              global: globalData
+              global: globalData,
+              collections: {}
             };
           }
         }
@@ -220,23 +221,29 @@ export async function getProps(config: GetPropsConfig): Promise<PageProps> {
           const propName = cleanSectionName + "Content";
           props[propName] = {
             data: sectionData,
-            global: globalData
+            global: globalData,
+            collections: {}
           };
         }
       }
       
       // Add collections to sections
+      console.log('Processing pagePromises:', Object.keys(pagePromises));
       for (const key in pagePromises) {
         if (pagePromises.hasOwnProperty(key)) {
           if (key.startsWith("section")) {
             const splitKeys = key.split(".");
+            console.log('Processing collection key:', key, 'splitKeys:', splitKeys);
             if (props[splitKeys[1]]) {
               if (!(props[splitKeys[1]] as { collections?: Record<string, unknown> }).collections) {
                 (props[splitKeys[1]] as { collections?: Record<string, unknown> }).collections = {};
               }
               // Wait for the collection promise to resolve
               const collectionData = await pagePromises[key];
+              console.log('Collection data for', key, ':', collectionData);
               ((props[splitKeys[1]] as { collections?: Record<string, unknown> }).collections as Record<string, unknown>)[splitKeys[2]] = collectionData as unknown;
+            } else {
+              console.log('Props not found for:', splitKeys[1], 'available props:', Object.keys(props));
             }
           }
         }
@@ -430,13 +437,10 @@ async function getSectionCollectionData(config: { pageSettings: { sections: Reco
               collectionExpand = (collection as { expand?: unknown }).expand ?? null;
             }
 
-            pagePromises[
-              `section.${camelize(section.name) + "Content"}.${collectionName}`
-            ] = client.fetch(
-              `*[_type == "${camelize(collectionName)}"]${getExpand(
-                collectionExpand
-              )}`
-            );
+            const promiseKey = `section.${camelize(section.name) + "Content"}.${collectionName}`;
+            const queryString = `*[_type == "${camelize(collectionName)}"]${getExpand(collectionExpand)}`;
+            console.log('Setting up layout collection promise:', promiseKey, 'query:', queryString);
+            pagePromises[promiseKey] = client.fetch(queryString);
           }
         }
       }
