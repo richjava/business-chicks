@@ -255,14 +255,6 @@ export async function getProps(config: GetPropsConfig): Promise<PageProps> {
         }
       }
       
-      // Reset only page-specific promises, keep layout promises for other pages
-      Object.keys(pagePromises).forEach(key => {
-        // Keep layout promises (header, footer, section.headerContent.*, section.footerContent.*)
-        if (!key.startsWith('header') && !key.startsWith('footer') && !key.startsWith('section.headerContent') && !key.startsWith('section.footerContent')) {
-          delete pagePromises[key];
-        }
-      });
-      
       return resolve(props);
       
     } catch (error) {
